@@ -8,9 +8,6 @@ from typing import Tuple
 import numpy
 from sklearn.metrics import accuracy_score, confusion_matrix
 
-__author__ = 'harry-7'
-__version__ = '1.1'
-
 
 class Model(object):
     """
