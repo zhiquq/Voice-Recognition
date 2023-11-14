@@ -14,7 +14,43 @@
 │   ├──train.py //未知
 │   ├──ui.py //前端UI界面，使用模型对人声情感进行辨别
 
-
+├─speechemotionrecognition
+│      dnn.py
+│      mlmodel.py
+│      utilities.py
+│      __init__.py
+│
+└─test
+    │  machinelisten.h5
+    │  MFCC.jpg
+    │  model.h5
+    │  model_1.h5
+    │  predict.py
+    │  process.py
+    │  recorder1.py
+    │  recorder_ui.py
+    │  source.qrc
+    │  Spectrogram.jpg
+    │  train.py
+    │  ui.py
+    │  ui.ui
+    │  wave.jpg
+    │
+    ├─samples
+    │      201_angry.wav
+    │      201_fear.wav
+    │      201_happy.wav
+    │      201_neural.wav
+    │      201_sad.wav
+    │      201_surprise.wav
+    │
+    ├─source
+    │      1.png
+    │      QQ图片20220424222950.png
+    │
+    └─__pycache__
+            process.cpython-310.pyc
+            recorder1.cpython-310.pyc
 
 ## 修改提交方式
 
