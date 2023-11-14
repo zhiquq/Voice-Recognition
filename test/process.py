@@ -1,6 +1,3 @@
-import os
-import sys
-from typing import Tuple
 
 import librosa
 import numpy as np
@@ -11,6 +8,11 @@ import librosa.display
 import librosa.display
 import numpy as np
 import matplotlib.pyplot as plt
+import glob
+from Audiopy_ML import autoaudio
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import Normalizer
+
 mean_signal_length = 32000
 
 def get_mel(path):
@@ -40,7 +42,18 @@ def get_mel(path):
     f.clear()  # 释放内存
 
 
-
+def get_feature_vector(file_path: str):
+    
+    audio_dataset_path = glob.glob(file_path)
+    df = autoaudio.AutomatedExtractor_multiple(audio_dataset_path)
+    df =df.applymap(lambda x: np.median(x))
+    #test_data = test_data.applymap(lambda x:np.median(x))
+    
+    x = df.values
+    x = np.array(x)
+    x=Normalizer().fit_transform(x)
+    x=StandardScaler().fit_transform(x)
+    return x
 
 
 def get_feature_vector_from_mfcc(file_path: str, flatten: bool,

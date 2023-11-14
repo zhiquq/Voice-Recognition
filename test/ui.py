@@ -20,18 +20,64 @@ import process
 from keras.models import load_model
 from keras.utils import np_utils
 import numpy as np
+from recorder1 import Recorder
+
+class UiManage():
+    uiList=[]
+    
 
 
-class Ui_MainWindow(object):
-    def __init__(self, MainWindow):
-        self.path = getcwd()
+class Ui_Dialog(QMainWindow):
+    def __init__(self):
+        super(Ui_Dialog, self).__init__()
 
-        self.setupUi(MainWindow)
-        self.retranslateUi(MainWindow)
+        self.setupUi(self)
+        self.retranslateUi(self)
         self.slot_init() # 槽函数设置
 
-        self.model_path = None # 模型路径
-        self.model = load_model('./model.h5')
+    def setupUi(self, Dialog):
+        Dialog.setObjectName("Dialog")
+        Dialog.resize(497, 246)
+        self.pushButton = QtWidgets.QPushButton(Dialog)
+        self.pushButton.setGeometry(QtCore.QRect(80, 100, 111, 41))
+        self.pushButton.setObjectName("pushButton")
+        self.pushButton_2 = QtWidgets.QPushButton(Dialog)
+        self.pushButton_2.setGeometry(QtCore.QRect(310, 100, 101, 41))
+        self.pushButton_2.setObjectName("pushButton_2")
+
+        self.retranslateUi(Dialog)
+        QtCore.QMetaObject.connectSlotsByName(Dialog)
+
+    def slot_init(self):
+        print(1)
+        self.pushButton.clicked.connect(self.fun)
+        self.pushButton_2.clicked.connect(self.fun1)
+    def fun(self):
+        rec = Recorder()
+        rec.positive()
+
+    def fun1(self):
+        ui.show()
+        ui1.hide()
+
+    def retranslateUi(self, Dialog):
+        _translate = QtCore.QCoreApplication.translate
+        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        self.pushButton.setText(_translate("Dialog", "开始录音"))
+        self.pushButton_2.setText(_translate("Dialog", "退出"))
+
+
+class Ui_MainWindow(QMainWindow):
+    def __init__(self):
+        super(Ui_MainWindow, self).__init__()
+        self.path = getcwd()+'/test'
+
+        self.setupUi(self)
+        self.retranslateUi(self)
+        self.slot_init() # 槽函数设置
+
+        self.model_path = './test/machinelisten.h5' # 模型路径
+        self.model = load_model(self.model_path,compile=False)
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1280, 920)
@@ -39,7 +85,7 @@ class Ui_MainWindow(object):
         font.setFamily("Agency FB")
         font.setPointSize(16)
         MainWindow.setFont(font)
-        MainWindow.setStyleSheet("#MainWindow{background-image: url(source/1.png);}")
+        MainWindow.setStyleSheet("#MainWindow{background-image: url(./test/source/1.png);}")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.label = QtWidgets.QLabel(self.centralwidget)
@@ -123,10 +169,10 @@ class Ui_MainWindow(object):
         self.pushButton.setText(_translate("MainWindow", "显示时域图"))
         self.pushButton_2.setText(_translate("MainWindow", "显示频谱图"))
         self.pushButton_3.setText(_translate("MainWindow", "MFCC特征提取"))
-        self.pushButton_4.setText(_translate("MainWindow", "上传语音"))
-        self.pushButton_5.setText(_translate("MainWindow", "播放语音"))
-        self.pushButton_6.setText(_translate("MainWindow", "识别情感"))
-        self.pushButton_7.setText(_translate("MainWindow", "退出系统"))
+        self.pushButton_4.setText(_translate("MainWindow", "上传音频"))
+        self.pushButton_5.setText(_translate("MainWindow", "录制音频"))
+        self.pushButton_6.setText(_translate("MainWindow", "播放音频"))
+        self.pushButton_7.setText(_translate("MainWindow", "识别语音"))
 
 
     def slot_init(self): # 定义槽函数
@@ -134,36 +180,38 @@ class Ui_MainWindow(object):
         self.pushButton_2.clicked.connect(self.display_feature)
         self.pushButton_3.clicked.connect(self.display_feature1)
         self.pushButton_4.clicked.connect(self.choose_file)
-        self.pushButton_5.clicked.connect(self.play_video)
-        self.pushButton_6.clicked.connect(self.start_recongniton)
-        self.pushButton_7.clicked.connect(self.closeEvent)
+        #self.pushButton_5.clicked.connect(self.play_video)
+        self.pushButton_6.clicked.connect(self.play_video)
+        self.pushButton_7.clicked.connect(self.start_recongniton)
 
     def display_waveform(self):
         to_flatten = False
         #process.get_feature_vector_from_mfcc(self.path, flatten=to_flatten)
         #process.get_mel(self.path)
         self.label_2.setScaledContents(True)  # 设置图像自适应界面大小
-        self.label_2.setPixmap(QtGui.QPixmap(r'./wave.jpg'))
+        self.label_2.setPixmap(QtGui.QPixmap(r'./test/wave.jpg'))
 
 
     def display_feature(self):
         self.label_3.setScaledContents(True)  # 设置图像自适应界面大小
-        self.label_3.setPixmap(QtGui.QPixmap(r'./Spectrogram.jpg'))
+        self.label_3.setPixmap(QtGui.QPixmap(r'./test/Spectrogram.jpg'))
 
     def display_feature1(self):
         self.label_4.setScaledContents(True)  # 设置图像自适应界面大小
-        self.label_4.setPixmap(QtGui.QPixmap(r'./MFCC.jpg'))
+        self.label_4.setPixmap(QtGui.QPixmap(r'./test/MFCC.jpg'))
 
     def start_recongniton(self):
         self.textBrowser.append('正在识别中...')
-
-        sample = process.get_feature_vector_from_mfcc(self.path, flatten=False)
-
-        sample = np.expand_dims(sample, axis=2)
+        
+        #sample = process.get_feature_vector_from_mfcc(self.path, flatten=False)
+        #sample = np.expand_dims(sample, axis=2)
+        
+        sample = process.get_feature_vector(self.path)
+        
         start = time.time()
         result = self.model.predict(np.array([sample]))
         end = time.time()-start
-
+        
         result = np.argmax(result)
         if result==0:
             self.textBrowser.append('识别结果：angry\n用时：%.2f' %end)
@@ -190,7 +238,7 @@ class Ui_MainWindow(object):
     def choose_file(self):
         fileName_choose, filetype = QFileDialog.getOpenFileName(
             self.centralwidget, "选取图片文件",
-            '../data1',  # 起始路径
+            './data1',  # 起始路径
             "(*.wav)")  # 文件类型
         self.path = fileName_choose  # 保存路径
 
@@ -217,14 +265,19 @@ class Ui_MainWindow(object):
         else:
             pass
 
-
+def uifun1(ui,ui1):
+    ui.hide()
+    ui1.show()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
-    window = QMainWindow()
-    ui = Ui_MainWindow(window)
 
-    window.show()
+    ui = Ui_MainWindow()
+
+    ui.show()
+
+    ui1 = Ui_Dialog()
+    ui.pushButton_5.clicked.connect(lambda:uifun1(ui,ui1))
     exit(app.exec_())
 

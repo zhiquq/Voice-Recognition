@@ -1,7 +1,4 @@
 """
-
-author: harry-7
-
 This file contains functions to read the data files from the given folders and
 generate Mel Frequency Cepestral Coefficients features for the given audio
 files as training samples.

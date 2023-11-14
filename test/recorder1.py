@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Oct 11 15:44:09 2018
-@author: zhangxinchun
-"""
 
 # -*- coding: utf-8 -*-
 
